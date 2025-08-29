@@ -1,5 +1,6 @@
 package com.bytemall.bytemall.controller;
 
+import com.bytemall.bytemall.dto.LoginDTO;
 import com.bytemall.bytemall.entity.Member;
 import com.bytemall.bytemall.service.MemberService;
 import jakarta.annotation.Resource;
@@ -34,6 +35,11 @@ public class MemberController {
             // 实际项目中会进行更复杂的错误处理
             return null;
         }
+    }
+
+    @PostMapping("/login")
+    public Member login(@RequestBody LoginDTO loginDTO) {
+        return memberService.login(loginDTO);
     }
 
 
