@@ -1,13 +1,17 @@
 package com.bytemall.bytemall.config;
 
+import com.bytemall.bytemall.filter.JwtAuthenticationFilter;
+import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
 @Configuration
@@ -20,6 +24,9 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Resource
+    private JwtAuthenticationFilter jwtAuthenticationFilter; // 注入我们自定义的过滤器
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -31,7 +38,12 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 // 禁用CSRF保护，因为我们是无状态的API，不使用Cookie/Session
-                .csrf(csrf->csrf.disable());
+                .csrf(csrf->csrf.disable())
+                // **新增配置：** 设置Session管理策略为无状态（STATELESS）
+                // 这告诉Spring Security不要创建或使用HttpSession
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // **新增配置：** 将我们的JWT过滤器添加到UsernamePasswordAuthenticationFilter之前
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);;
 
         return http.build();
     }

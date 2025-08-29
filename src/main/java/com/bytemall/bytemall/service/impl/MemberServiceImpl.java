@@ -6,6 +6,7 @@ import com.bytemall.bytemall.dto.LoginDTO;
 import com.bytemall.bytemall.entity.Member;
 import com.bytemall.bytemall.mapper.MemberMapper;
 import com.bytemall.bytemall.service.MemberService;
+import com.bytemall.bytemall.utils.JwtUtil;
 import jakarta.annotation.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,9 +30,11 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         return super.save(entity);
     }
 
+    @Resource // <-- 新增！注入JwtUtil的实例
+    private JwtUtil jwtUtil;
 
     @Override
-    public Member login(LoginDTO loginDTO) {
+    public String login(LoginDTO loginDTO) {
         // 1. 根据用户名查询数据库中的用户
         LambdaQueryWrapper<Member> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Member::getUsername, loginDTO.getUsername());
@@ -55,6 +58,6 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
         // 5. 登录成功，返回用户信息（注意：返回前应该脱敏，比如把密码设为null）
         member.setPassword(null);
-        return member;
+        return jwtUtil.generateToken(member.getUsername(), member.getId());
     }
 }
