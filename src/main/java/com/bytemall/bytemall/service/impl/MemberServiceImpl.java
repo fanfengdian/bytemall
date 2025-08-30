@@ -9,6 +9,7 @@ import com.bytemall.bytemall.mapper.MemberMapper;
 import com.bytemall.bytemall.service.MemberService;
 import com.bytemall.bytemall.utils.JwtUtil;
 import jakarta.annotation.Resource;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> implements MemberService {
 
+    @Resource
+    private RabbitTemplate rabbitTemplate; // 注入Spring封装好的RabbitMQ操作模板
     @Resource
     private PasswordEncoder passwordEncoder; // 注入我们在SecurityConfig中定义的加密器
 
@@ -29,7 +32,30 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         entity.setPassword(encodedPassword);
 
         // 4. 调用父类的save方法，将包含加密密码的实体存入数据库
-        return super.save(entity);
+        boolean result = super.save(entity);
+
+        // --- 第三部分：新增的异步消息发送 ---
+        // 5. 检查数据库操作是否成功
+        if (result) {
+            System.out.println("====== 用户数据已存入数据库 (ID: " + entity.getId() + ") ======");
+
+            // 6. 发送一条"新用户注册"的消息到MQ
+            // 我们需要把新生成的用户ID发送出去，以便消费者知道该为哪个用户服务
+            // 注意：super.save(entity)执行后，MyBatis-Plus会自动将数据库生成的ID回填到entity对象中
+            try {
+                rabbitTemplate.convertAndSend("member.exchange", "member.registered", entity.getId());
+                System.out.println("====== '新用户注册' 消息已发送到RabbitMQ (用户ID: " + entity.getId() + ") ======");
+            } catch (Exception e) {
+                // 在真实项目中，这里应该有更健壮的错误处理或重试机制
+                // 比如，如果MQ发送失败，可以将消息存入数据库的一张"待发送消息表"中，由定时任务补偿发送
+                System.err.println("发送MQ消息失败: " + e.getMessage());
+            }
+        }
+
+        // 7. 返回数据库操作的结果
+        return result;
+
+
     }
 
     @Resource // <-- 新增！注入JwtUtil的实例
