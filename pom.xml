@@ -107,6 +107,12 @@
         <artifactId>spring-boot-starter-amqp</artifactId>
     </dependency>
 
+    <!-- Spring Data Elasticsearch Starter -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+    </dependency>
+
 </dependencies>
 
 <build>
