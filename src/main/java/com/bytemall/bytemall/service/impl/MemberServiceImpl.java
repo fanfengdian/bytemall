@@ -3,11 +3,13 @@ package com.bytemall.bytemall.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bytemall.bytemall.dto.LoginDTO;
+import com.bytemall.bytemall.dto.MemberUpdateDTO;
 import com.bytemall.bytemall.entity.Member;
 import com.bytemall.bytemall.mapper.MemberMapper;
 import com.bytemall.bytemall.service.MemberService;
 import com.bytemall.bytemall.utils.JwtUtil;
 import jakarta.annotation.Resource;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,5 +61,24 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         // 5. 登录成功，返回用户信息（注意：返回前应该脱敏，比如把密码设为null）
         member.setPassword(null);
         return jwtUtil.generateToken(member.getUsername(), member.getId());
+    }
+
+
+    @Override
+    public boolean updateMemberInfo(Long memberId, MemberUpdateDTO updateDTO) {
+        // 1. 创建一个待更新的Member实体对象
+        Member memberToUpdate = new Member();
+
+        // 2. 使用Spring的工具类，将DTO中的属性值拷贝到实体对象中
+        // 这是一种常见的、优雅的DTO到Entity的转换方式
+        // 它会自动匹配同名、同类型的属性进行拷贝
+        BeanUtils.copyProperties(updateDTO, memberToUpdate);
+
+        // 3. 设置要更新的记录的ID
+        memberToUpdate.setId(memberId);
+
+        // 4. 调用MyBatis-Plus的updateById方法
+        // 这个方法非常智能，它只会更新memberToUpdate中不为null的字段
+        return this.updateById(memberToUpdate);
     }
 }

@@ -5,6 +5,7 @@ import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -34,8 +35,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // 对于注册接口，允许所有用户访问（包括未登录的）
                         .requestMatchers("/members/register", "/members/login").permitAll()
+                        // 2. 新增：允许任何人通过GET方法访问/products下的所有路径
+                        .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         // 对于其他所有请求，都必须经过身份验证
-                        .anyRequest().authenticated()
+                        //.anyRequest().authenticated()
+                        .anyRequest().hasRole("USER")
                 )
                 // 禁用CSRF保护，因为我们是无状态的API，不使用Cookie/Session
                 .csrf(csrf->csrf.disable())

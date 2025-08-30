@@ -1,6 +1,7 @@
 package com.bytemall.bytemall.controller;
 
 import com.bytemall.bytemall.dto.LoginDTO;
+import com.bytemall.bytemall.dto.MemberUpdateDTO;
 import com.bytemall.bytemall.entity.Member;
 import com.bytemall.bytemall.service.MemberService;
 import jakarta.annotation.Resource;
@@ -40,6 +41,23 @@ public class MemberController {
     @PostMapping("/login")
     public String login(@RequestBody LoginDTO loginDTO) {
         return memberService.login(loginDTO);
+    }
+
+    @PutMapping("/{id}")
+    public boolean updateMember(@PathVariable Long id, @RequestBody MemberUpdateDTO updateDTO) {
+        // **安全提示：** 在真实项目中，应该从JWT Token中解析出用户ID
+        // 来防止用户A通过接口更新用户B的信息。
+        // 比如：Long currentUserId = jwtUtil.extractMemberId(token);
+        // if (!id.equals(currentUserId)) { throw new AccessDeniedException("无权操作"); }
+
+        return memberService.updateMemberInfo(id, updateDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public boolean deleteMember(@PathVariable Long id) {
+        // 由于配置了逻辑删除，这个removeById方法执行的不再是DELETE语句
+        // 而是 UPDATE user_member SET is_deleted=1 WHERE id=? AND is_deleted=0
+        return memberService.removeById(id);
     }
 
 
