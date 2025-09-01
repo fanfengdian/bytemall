@@ -71,10 +71,10 @@
         <scope>test</scope>
     </dependency>
 
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
+<!--    <dependency>-->
+<!--        <groupId>org.springframework.boot</groupId>-->
+<!--        <artifactId>spring-boot-starter-security</artifactId>-->
+<!--    </dependency>-->
 
     <!-- JJWT (Java JWT) -->
     <dependency>
@@ -111,6 +111,13 @@
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+    </dependency>
+
+    <!-- Redisson Spring Boot Starter -->
+    <dependency>
+        <groupId>org.redisson</groupId>
+        <artifactId>redisson-spring-boot-starter</artifactId>
+        <version>3.27.2</version> <!-- 这是一个稳定且较新的版本 -->
     </dependency>
 
 </dependencies>
