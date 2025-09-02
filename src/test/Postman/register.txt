@@ -1,0 +1,72 @@
+[
+
+    {
+        "username": "testuser",
+        "password": "123456",
+        "nickname": "测试用户",
+        "mobile": "13888888888"
+    },
+    {
+        "username": "zhangsan",
+        "password": "123456",
+        "nickname": "张三",
+        "mobile": "13800138000"
+    },
+    {
+        "username": "lisi",
+        "password": "123456",
+        "nickname": "李四",
+        "mobile": "13900139000"
+    },
+    {
+        "username": "wangwu",
+        "password": "123456",
+        "nickname": "王五",
+        "mobile": "13900139005"
+    },
+    {
+        "username": "zhaoliu",
+        "password": "123456",
+        "nickname": "赵六",
+        "mobile": "13600000000"
+    },
+
+
+
+    {
+        "username": "sunqi",
+        "password": "test_123456",
+        "nickname": "孙七",
+        "mobile": "13700000001"
+    },
+    {
+        "username": "zhouba",
+        "password": "test_123456",
+        "nickname": "周八",
+        "mobile": "13700000002"
+    },
+    {
+        "username": "wujiu",
+        "password": "test_123456",
+        "nickname": "吴九",
+        "mobile": "13700000003"
+    },
+    {
+        "username": "zhengshi",
+        "password": "test_123456",
+        "nickname": "郑十",
+        "mobile": "13700000004"
+    },
+    {
+        "username": "chenyi",
+        "password": "test_123456",
+        "nickname": "陈一",
+        "mobile": "13700000005"
+    },
+    {
+        "username": "qianer",
+        "password": "test_123456",
+        "nickname": "钱二",
+        "mobile": "13700000006"
+    }
+]
